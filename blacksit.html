@@ -1,0 +1,113 @@
+
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Black Site</title>
+<style>
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:black;
+  color:#00ff66;
+}
+#overlay{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.box{
+  background:#000;
+  border:1px solid #00ff66;
+  padding:20px;
+  width:340px;
+}
+h1{
+  text-align:center;
+  margin-top:0;
+  font-size:20px;
+}
+input,button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  background:black;
+  color:#00ff66;
+  border:1px solid #00ff66;
+}
+#messages{
+  height:170px;
+  border:1px solid #00ff66;
+  margin-bottom:10px;
+  padding:5px;
+  overflow:auto;
+}
+</style>
+</head>
+<body>
+
+<div id="overlay">
+
+  <div id="loginBox" class="box">
+    <h1>BLACK SITE</h1>
+    <div>ENTER CODE</div>
+    <input id="codeInput" type="password">
+    <button onclick="login()">ENTER</button>
+  </div>
+
+  <div id="chatBox" class="box" style="display:none">
+    <h1>BLACK SITE</h1>
+    <div id="messages"></div>
+    <input id="msgInput" placeholder="message...">
+    <button onclick="sendMsg()">SEND</button>
+  </div>
+
+</div>
+
+<script>
+const ACCESS_CODE = "Black Site";
+
+function login(){
+  let c = document.getElementById("codeInput").value;
+  if(c === ACCESS_CODE){
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("chatBox").style.display="block";
+  }else{
+    alert("wrong code");
+  }
+}
+
+function sendMsg(){
+  let m = document.getElementById("msgInput").value;
+  if(!m) return;
+
+  localStorage.setItem("blacksite_lastmsg", m);
+  localStorage.setItem("blacksite_time", Date.now());
+
+  document.getElementById("msgInput").value="";
+  showMsg();
+}
+
+function showMsg(){
+  let msg = localStorage.getItem("blacksite_lastmsg");
+  let t   = localStorage.getItem("blacksite_time");
+  let box = document.getElementById("messages");
+
+  if(!msg){ box.innerHTML=""; return; }
+
+  if(Date.now() - t > 60000){
+    localStorage.removeItem("blacksite_lastmsg");
+    localStorage.removeItem("blacksite_time");
+    box.innerHTML="";
+    return;
+  }
+
+  box.innerText = msg;
+}
+
+setInterval(showMsg,500);
+</script>
+
+</body>
+</html>
